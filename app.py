@@ -14,25 +14,21 @@ load_dotenv()
 
 
 machine = TocMachine(
-    states=["user", "state1", "state2"],
+    states=["beginner", "player", "customer", "master", "free"],
     transitions=[
-        {
-            "trigger": "advance",
-            "source": "user",
-            "dest": "state1",
-            "conditions": "is_going_to_state1",
-        },
-        {
-            "trigger": "advance",
-            "source": "user",
-            "dest": "state2",
-            "conditions": "is_going_to_state2",
-        },
-        {"trigger": "go_back", "source": ["state1", "state2"], "dest": "user"},
-    ],
-    initial="user",
-    auto_transitions=False,
-    show_conditions=True,
+        {"trigger": "advance", "source": "beginner", "dest": "player", "conditions": "coffee_train"},
+        {"trigger": "advance", "source": "beginner", "dest": "customer", "conditions": "menu"},
+        {"trigger": "advance", "source": "player", "dest": "=", "conditions": "coffee_knowledge"},
+        {"trigger": "advance", "source": "player", "dest": "master", "conditions": "contest"},
+        {"trigger": "advance", "source": "player", "dest": "customer", "conditions": "turn_new_leaf"},
+        {"trigger": "advance", "source": "master", "dest": "free", "conditions": "finish"},
+        {"trigger": "advance", "source": "free", "dest": "beginner"},
+        {"trigger": "advance", "source": "customer", "dest": "=", "conditions": "select_coffee"},
+        {"trigger": "advance", "source": "customer", "dest": "free", "conditions": "leave"},
+                ],
+        initial="beginner",
+        auto_transitions=False,
+        show_conditions=True,
 )
 
 app = Flask(__name__, static_url_path="")
@@ -71,10 +67,13 @@ def callback():
             continue
         if not isinstance(event.message, TextMessage):
             continue
-
-        line_bot_api.reply_message(
-            event.reply_token, TextSendMessage(text=event.message.text)
-        )
+        response = machine.advance(event)
+        if response == False:
+            send_text_message(event.reply_token, "請重新輸入")
+        print(f"\nFSM STATE: {machine.state}")
+        # line_bot_api.reply_message(
+        #     event.reply_token, TextSendMessage(text=event.message.text)
+        # )
 
     return "OK"
 
@@ -116,7 +115,7 @@ def show_fsm():
 
 
 if __name__ == "__main__":
-    # machine.get_graph().draw("fsm.png", prog="dot", format="png")
-    # # return send_file("fsm.png", mimetype="image/png")
+    machine.get_graph().draw("fsm.png", prog="dot", format="png")
+
     port = os.environ.get("PORT", 8000)
     app.run(host="0.0.0.0", port=port, debug=True)

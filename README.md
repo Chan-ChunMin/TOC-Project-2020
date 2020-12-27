@@ -1,11 +1,63 @@
-# TOC Project 2020
+# FSM Line Chatbot
+
+## 構想
+設計一個chatbot將使用者拆分為 1. 學習咖啡知識者 2. 消費者
+若為學習咖啡者，可透過輸入特定關鍵字，來學習咖啡豆、咖啡相關器材等知識
+若為消費者，可根據菜單上有什麼品項並輸入後，作為點餐的方式
+
+## Finite State Machine
+![fsm](./img/show-fsm.png)
+
+## States
+
+In every states if the bot doesn't know the input message, it will reply ```請重新輸入```
+
+### beginner
+The initial state is set to ```beginner```.
+
+### player
+The state of being a coffee player. You can input some keywords here, for example
+```
+* Input : "咖啡豆"
+		* Reply : "分為兩種，羅布斯塔與阿拉比卡"
+
+* Input : "手沖工具"
+		* Reply : "手沖壺、濾紙、濾杯、磨豆機"		
+```
+### master
+The state of being a coffee master. You are already have enough knowledge.
+
+### customer
+The state of begin a customer in coffe shop. You can input some keywords here, for example
+```
+* Input : "美式"
+		* Reply : '美式為100元'
+* Input : "拿鐵"
+		* Reply : '拿鐵為120元'
+
+```
+### free
+The state of being a space state.
+
+---
+
+## 使用範例
+
+![1](./img/1.png)
+![2](./img/2.png)
+![3](./img/3.png)
+![4](./img/4.png)
+![5](./img/5.png)
+![6](./img/6.png)
+![7](./img/7.png)
+![8](./img/8.png)
+
+---
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/dc7fa47fcd809b99d087/maintainability)](https://codeclimate.com/github/NCKU-CCS/TOC-Project-2020/maintainability)
 
 [![Known Vulnerabilities](https://snyk.io/test/github/NCKU-CCS/TOC-Project-2020/badge.svg)](https://snyk.io/test/github/NCKU-CCS/TOC-Project-2020)
 
-
-Template Code for TOC Project 2020
 
 A Line bot based on a finite state machine
 
@@ -69,21 +121,6 @@ python3 app.py
 
 Or You can use [servo](http://serveo.net/) to expose local servers to the internet.
 
-
-## Finite State Machine
-![fsm](./img/show-fsm.png)
-
-## Usage
-The initial state is set to `user`.
-
-Every time `user` state is triggered to `advance` to another state, it will `go_back` to `user` state after the bot replies corresponding message.
-
-* user
-	* Input: "go to state1"
-		* Reply: "I'm entering state1"
-
-	* Input: "go to state2"
-		* Reply: "I'm entering state2"
 
 ## Deploy
 Setting to deploy webhooks on Heroku.
